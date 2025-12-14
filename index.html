@@ -7,34 +7,51 @@
     <style>
         /* Global CLI Theme Styles */
         body {
-            background-color: #000000; /* Deep black background */
-            color: #00FFFF; /* Bright cyan text for 'terminal' feel */
+            background-color: #000000;
+            color: #00FFFF;
             text-align: center;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Monospaced font */
-            /* Diminuer le padding sur les bords pour mobile */
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             padding: 10px;
+
+            /* AJUSTEMENTS POUR ÉVITER LE DÉFILEMENT GÉNÉRAL */
+            display: flex; /* Active Flexbox */
+            flex-direction: column; /* Organise les enfants verticalement */
+            align-items: center;
+            justify-content: space-between; /* Distribue l'espace verticalement */
+            min-height: 100vh; /* Prend toute la hauteur de la fenêtre d'affichage */
+            margin: 0; /* Supprime les marges par défaut */
+            box-sizing: border-box; /* S'assure que le padding est inclus dans la hauteur */
         }
 
         /* Heading Style */
         h1 {
-            color: #00FF7F; /* A bright green for the main title */
+            color: #00FF7F;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             text-align: center;
             border-bottom: 2px solid #00FFFF;
             padding-bottom: 10px;
-            margin-bottom: 30px;
-            /* Augmenter la taille pour le mobile */
-            font-size: 1.8em; 
+            margin-bottom: 20px; /* Réduit la marge */
+            font-size: 1.8em;
+            width: 90%; /* S'assurer qu'il s'adapte bien */
         }
 
         /* Form and Label Styles */
         form {
             text-align: center;
-            /* Laisser la max-width, mais elle sera ignorée sur petit écran grâce à la media query */
             max-width: 400px;
             margin: 0 auto;
-            /* Assurer une marge suffisante autour du formulaire */
-            padding: 0 10px; 
+            padding: 0 10px;
+            width: 100%;
+            flex-grow: 1; /* Permet au formulaire de prendre l'espace restant */
+        }
+
+        /* NOUVEAU: Conteneur de défilement pour les champs */
+        .form-fields-container {
+            /* Limite la hauteur et permet le défilement SEULEMENT des champs */
+            max-height: 55vh; 
+            overflow-y: auto; 
+            padding-right: 15px; /* Pour éviter que la barre de défilement ne mange le contenu */
+            margin-bottom: 10px;
         }
 
         label {
@@ -42,33 +59,30 @@
             text-align: left;
             margin-bottom: 5px;
             color: #00FFFF;
-            /* Rendre les labels plus grands pour le doigt */
-            font-size: 1.1em; 
+            font-size: 1.1em;
         }
 
         /* Input and Select Fields - CLI Look */
         input[type="number"], select {
             background-color: #000000;
             color: #00FFFF;
-            border: 1px solid #00FFFF; /* Subtle cyan border */
-            /* Augmenter le padding pour le doigt */
-            padding: 10px; 
-            margin-bottom: 20px; /* Plus d'espace entre les champs */
-            width: 100%; 
-            box-sizing: border-box; 
+            border: 1px solid #00FFFF;
+            padding: 10px;
+            margin-bottom: 15px; /* Réduit un peu l'espacement pour économiser de l'espace */
+            width: 100%;
+            box-sizing: border-box;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            /* Rendre la police plus grande dans les champs */
-            font-size: 1.1em; 
+            font-size: 1.1em;
         }
-        
-        /* ... (Règles existantes pour input[type="number"]::-webkit-inner-spin-button, etc.) ... */
+
+        /* Input Number Spinners (Arrows) */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
-            margin: 0; 
+            margin: 0;
         }
         input[type="number"] {
-            -moz-appearance: textfield; 
+            -moz-appearance: textfield;
         }
 
         select option {
@@ -80,7 +94,6 @@
         select:focus,
         button:focus {
             outline: none;
-            /* box-shadow: 0 0 5px #00FF7F; */ /* Optionnel */
         }
 
         /* Button Style */
@@ -88,71 +101,58 @@
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             text-align: center;
             display: block;
-            margin: 20px auto;
-            border-radius: 0; 
-            /* Rendre le bouton plus grand pour le mobile */
-            width: 80%; 
-            max-width: 250px; /* Limiter la taille max sur grand écran */
-            height: 50px; /* Plus de hauteur */
+            margin: 10px auto; /* Marge réduite */
+            border-radius: 0;
+            width: 80%;
+            max-width: 250px;
+            height: 50px;
             background-color: #000000;
-            color: #00FF7F; 
-            border: 2px solid #00FF7F; 
+            color: #00FF7F;
+            border: 2px solid #00FF7F;
             cursor: pointer;
             transition: background-color 0.1s, color 0.1s;
-            font-size: 1.2em; /* Texte plus grand */
+            font-size: 1.2em;
         }
 
         button:hover {
             background-color: #00FF7F;
-            color: #000000; 
+            color: #000000;
         }
 
         /* Result Display Style */
         #DIN {
-            margin-top: 30px;
-            /* Rendre le résultat très visible */
-            font-size: 2em; 
+            margin-top: 15px; /* Marge réduite */
+            margin-bottom: 5px; /* Marge inférieure minimale */
+            font-size: 2em;
             color: #00FF7F;
             text-align: center;
-            white-space: pre; 
+            white-space: pre;
         }
-
-        /* 2. MEDIA QUERY POUR LES PETITS ÉCRANS (Optionnel mais souvent utile) */
-        /* Dans ce cas, les styles globaux ajustés suffisent, mais on pourrait ajouter des ajustements ici. */
-        /*
-        @media screen and (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
-            #DIN {
-                font-size: 1.8em;
-            }
-        }
-        */
 
     </style>
 </head>
 <body>
 <h1 id="header">DIN CALCULATOR</h1>
-<br>
+
 <form>
-    <label for="weight">Entrer votre poids (lbs):</label>
-    <input type="number" id="weight">
-    <label for="height">Entrer taille (cm):</label>
-    <input type="number" id="height">
-    <label for="age">Entrer votre âge:</label>
-    <input type="number" id="age">
-    <label for="longeurSemelle">Longueur de la botte (mm):</label>
-    <input type="number" id="longeurSemelle">
-    <label for="skierLevel">Choisissez votre niveau de ski: </label>
-    <select id="skierLevel">
-        <option value="1">Débutant</option>
-        <option value="2">Intermédiaire</option>
-        <option value="3">Avancé</option>
-    </select>
+    <div class="form-fields-container">
+        <label for="weight">Entrer votre poids (lbs):</label>
+        <input type="number" id="weight">
+        <label for="height">Entrer taille (cm):</label>
+        <input type="number" id="height">
+        <label for="age">Entrer votre âge:</label>
+        <input type="number" id="age">
+        <label for="longeurSemelle">Longueur de la botte (mm):</label>
+        <input type="number" id="longeurSemelle">
+        <label for="skierLevel">Choisissez votre niveau de ski: </label>
+        <select id="skierLevel">
+            <option value="1">Débutant</option>
+            <option value="2">Intermédiaire</option>
+            <option value="3">Avancé</option>
+        </select>
+    </div>
 </form>
 
-<br>
 <button onclick="calculateDIN()">
     CALCULER
 </button>
