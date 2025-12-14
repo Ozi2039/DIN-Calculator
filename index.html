@@ -6,14 +6,13 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>Calculateur de DIN - CLI Mode</title>
 
     <style>
 
         /* Global CLI Theme Styles */
-
         body {
             background-color: #000000; /* Deep black background */
             color: #00FFFF; /* Bright cyan text for 'terminal' feel */
@@ -50,223 +49,133 @@
             width: 100%;
             padding: 5px;
         }
+
+
         /* Heading Style */
-
         h1 {
-
             color: #00FF7F; /* A bright green for the main title */
-
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-
             text-align: center;
-
             border-bottom: 2px solid #00FFFF;
-
             padding-bottom: 10px;
-
-            margin-bottom: 30px;
-
+            margin: 10px 0 20px 0;
             /* Augmenter la taille pour le mobile */
-
-            font-size: 1.8em; 
-
+            font-size: 1.5em; 
         }
 
 
         /* Form and Label Styles */
-
         form {
-
             text-align: center;
-
             /* Laisser la max-width, mais elle sera ignorée sur petit écran grâce à la media query */
-
             max-width: 400px;
-
             margin: 0 auto;
-
             /* Assurer une marge suffisante autour du formulaire */
-
-            padding: 0 10px; 
-
+            padding: 0;
+            width: 100%;
         }
 
 
         label {
-
             display: block;
-
             text-align: left;
-
             margin-bottom: 5px;
-
             color: #00FFFF;
-
             /* Rendre les labels plus grands pour le doigt */
-
             font-size: 1.1em; 
-
         }
 
 
         /* Input and Select Fields - CLI Look */
-
         input[type="number"], select {
-
             background-color: #000000;
-
             color: #00FFFF;
-
             border: 1px solid #00FFFF; /* Subtle cyan border */
-
             /* Augmenter le padding pour le doigt */
-
-            padding: 10px; 
-
-            margin-bottom: 20px; /* Plus d'espace entre les champs */
-
+            padding: 8px; 
+            margin-bottom: 15px; /* Plus d'espace entre les champs */
             width: 100%; 
-
             box-sizing: border-box; 
-
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-
             /* Rendre la police plus grande dans les champs */
-
-            font-size: 1.1em; 
-
+            font-size: 1em; 
         }
-
         
-
         /* ... (Règles existantes pour input[type="number"]::-webkit-inner-spin-button, etc.) ... */
-
         input[type="number"]::-webkit-inner-spin-button,
-
         input[type="number"]::-webkit-outer-spin-button {
-
             -webkit-appearance: none;
-
             margin: 0; 
-
         }
-
         input[type="number"] {
-
             -moz-appearance: textfield; 
-
         }
 
 
         select option {
-
             background-color: #000000;
-
             color: #00FFFF;
-
         }
 
 
         input:focus,
-
         select:focus,
-
         button:focus {
-
             outline: none;
-
             /* box-shadow: 0 0 5px #00FF7F; */ /* Optionnel */
-
         }
 
 
         /* Button Style */
-
         button {
-
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-
             text-align: center;
-
             display: block;
-
-            margin: 20px auto;
-
+            margin: 15px auto;
             border-radius: 0; 
-
             /* Rendre le bouton plus grand pour le mobile */
-
             width: 80%; 
-
             max-width: 250px; /* Limiter la taille max sur grand écran */
-
-            height: 50px; /* Plus de hauteur */
-
+            height: 45px; /* Plus de hauteur */
             background-color: #000000;
-
             color: #00FF7F; 
-
             border: 2px solid #00FF7F; 
-
             cursor: pointer;
-
             transition: background-color 0.1s, color 0.1s;
-
-            font-size: 1.2em; /* Texte plus grand */
-
+            font-size: 1.1em; /* Texte plus grand */
         }
 
 
         button:hover {
-
             background-color: #00FF7F;
-
             color: #000000; 
-
         }
 
 
         /* Result Display Style */
-
         #DIN {
-
-            margin-top: 30px;
-
+            margin-top: 15px;
+            margin-bottom: 15px;
             /* Rendre le résultat très visible */
-
-            font-size: 2em; 
-
+            font-size: 1.5em; 
             color: #00FF7F;
-
             text-align: center;
-
-            white-space: pre; 
-
+            white-space: pre;
+            min-height: 40px;
         }
 
 
         /* 2. MEDIA QUERY POUR LES PETITS ÉCRANS (Optionnel mais souvent utile) */
-
         /* Dans ce cas, les styles globaux ajustés suffisent, mais on pourrait ajouter des ajustements ici. */
-
         /*
-
         @media screen and (max-width: 600px) {
-
             h1 {
-
                 font-size: 1.5em;
-
             }
-
             #DIN {
-
                 font-size: 1.8em;
-
             }
-
         }
-
         */
 
 
@@ -275,54 +184,31 @@
 </head>
 
 <body>
-
+<div class="container">
 <h1 id="header">DIN CALCULATOR</h1>
-
-<br>
-
 <form>
-
     <label for="weight">Entrer votre poids (lbs):</label>
-
     <input type="number" id="weight">
-
     <label for="height">Entrer taille (cm):</label>
-
     <input type="number" id="height">
-
     <label for="age">Entrer votre âge:</label>
-
     <input type="number" id="age">
-
     <label for="longeurSemelle">Longueur de la botte (mm):</label>
-
     <input type="number" id="longeurSemelle">
-
     <label for="skierLevel">Choisissez votre niveau de ski: </label>
-
     <select id="skierLevel">
-
         <option value="1">Débutant</option>
-
         <option value="2">Intermédiaire</option>
-
         <option value="3">Avancé</option>
-
     </select>
-
 </form>
 
-
-<br>
-
 <button onclick="calculateDIN()">
-
     CALCULER
-
 </button>
 
-
-<div id="DIN"></div>
+<div id="DIN">DIN: NaN</div>
+</div>
 
 
 <script>
@@ -706,4 +592,4 @@
 
 </body>
 
-</html> 
+</html>
