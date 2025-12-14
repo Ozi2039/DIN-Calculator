@@ -5,36 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculateur de DIN - CLI Mode</title>
     <style>
-        /* Global CLI Theme Styles */
+        /* 💡 MODIFICATION 1: Assurer que le corps (body) remplit le viewport et désactiver le défilement principal */
         body {
-            background-color: #000000; /* Deep black background */
-            color: #00FFFF; /* Bright cyan text for 'terminal' feel */
+            background-color: #000000;
+            color: #00FFFF;
             text-align: center;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Monospaced font */
-            /* Diminuer le padding sur les bords pour mobile */
-            padding: 10px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            padding: 0; /* Important: Supprimer le padding par défaut du body */
+            margin: 0; /* Important: Supprimer la marge par défaut du body */
+            height: 100vh; /* Prendre toute la hauteur du viewport */
+            /* display: flex;
+            flex-direction: column;
+            align-items: center; */ /* Garder ces lignes en commentaire pour le moment pour utiliser l'approche du conteneur central */
+            overflow: hidden; /* Empêche le défilement au niveau du body */
         }
+
+        /* 💡 MODIFICATION 2: Conteneur central pour le contenu */
+        #main-container {
+            /* Utilisation de Flexbox pour centrer le contenu verticalement si l'écran est grand, ou pour permettre le défilement interne si l'écran est petit et le contenu long */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Aligner en haut par défaut */
+            align-items: center;
+            height: 100%; /* Occuper 100% de la hauteur du body (100vh) */
+            padding: 10px; /* Padding interne pour laisser de l'espace sur les bords */
+            box-sizing: border-box;
+            /* Permettre le défilement SEULEMENT dans ce conteneur si le contenu dépasse */
+            overflow-y: auto; 
+        }
+
 
         /* Heading Style */
         h1 {
-            color: #00FF7F; /* A bright green for the main title */
+            color: #00FF7F;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             text-align: center;
             border-bottom: 2px solid #00FFFF;
             padding-bottom: 10px;
-            margin-bottom: 30px;
-            /* Augmenter la taille pour le mobile */
-            font-size: 1.8em; 
+            margin: 0 0 30px 0; /* Ajuster les marges */
+            font-size: 1.8em;
+            width: 100%; /* Pour que la bordure prenne toute la largeur */
+            max-width: 400px; /* Aligner sur la max-width du formulaire */
+            box-sizing: border-box; /* Inclure le padding dans la largeur */
+            padding-left: 10px;
+            padding-right: 10px;
         }
 
         /* Form and Label Styles */
         form {
             text-align: center;
-            /* Laisser la max-width, mais elle sera ignorée sur petit écran grâce à la media query */
             max-width: 400px;
-            margin: 0 auto;
-            /* Assurer une marge suffisante autour du formulaire */
-            padding: 0 10px; 
+            margin: 0; /* Retirer le margin: 0 auto; car le conteneur principal gère le centrage */
+            padding: 0 10px;
+            width: 100%; /* Assurer que le formulaire utilise la largeur disponible dans le conteneur */
+            box-sizing: border-box;
         }
 
         label {
@@ -42,33 +66,30 @@
             text-align: left;
             margin-bottom: 5px;
             color: #00FFFF;
-            /* Rendre les labels plus grands pour le doigt */
-            font-size: 1.1em; 
+            font-size: 1.1em;
         }
 
         /* Input and Select Fields - CLI Look */
         input[type="number"], select {
             background-color: #000000;
             color: #00FFFF;
-            border: 1px solid #00FFFF; /* Subtle cyan border */
-            /* Augmenter le padding pour le doigt */
-            padding: 10px; 
-            margin-bottom: 20px; /* Plus d'espace entre les champs */
-            width: 100%; 
-            box-sizing: border-box; 
+            border: 1px solid #00FFFF;
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            /* Rendre la police plus grande dans les champs */
-            font-size: 1.1em; 
+            font-size: 1.1em;
         }
-        
+       
         /* ... (Règles existantes pour input[type="number"]::-webkit-inner-spin-button, etc.) ... */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
-            margin: 0; 
+            margin: 0;
         }
         input[type="number"] {
-            -moz-appearance: textfield; 
+            -moz-appearance: textfield;
         }
 
         select option {
@@ -80,7 +101,6 @@
         select:focus,
         button:focus {
             outline: none;
-            /* box-shadow: 0 0 5px #00FF7F; */ /* Optionnel */
         }
 
         /* Button Style */
@@ -89,75 +109,75 @@
             text-align: center;
             display: block;
             margin: 20px auto;
-            border-radius: 0; 
-            /* Rendre le bouton plus grand pour le mobile */
-            width: 80%; 
-            max-width: 250px; /* Limiter la taille max sur grand écran */
-            height: 50px; /* Plus de hauteur */
+            border-radius: 0;
+            width: 80%;
+            max-width: 250px;
+            height: 50px;
             background-color: #000000;
-            color: #00FF7F; 
-            border: 2px solid #00FF7F; 
+            color: #00FF7F;
+            border: 2px solid #00FF7F;
             cursor: pointer;
             transition: background-color 0.1s, color 0.1s;
-            font-size: 1.2em; /* Texte plus grand */
+            font-size: 1.2em;
         }
 
         button:hover {
             background-color: #00FF7F;
-            color: #000000; 
+            color: #000000;
         }
 
         /* Result Display Style */
         #DIN {
             margin-top: 30px;
-            /* Rendre le résultat très visible */
-            font-size: 2em; 
+            font-size: 2em;
             color: #00FF7F;
             text-align: center;
-            white-space: pre; 
+            white-space: pre;
+            /* 💡 MODIFICATION 3: Assurer que le résultat ne cause pas de débordement */
+            margin-bottom: 10px; 
+            padding-bottom: 10px; 
         }
 
-        /* 2. MEDIA QUERY POUR LES PETITS ÉCRANS (Optionnel mais souvent utile) */
-        /* Dans ce cas, les styles globaux ajustés suffisent, mais on pourrait ajouter des ajustements ici. */
-        /*
-        @media screen and (max-width: 600px) {
-            h1 {
-                font-size: 1.5em;
-            }
-            #DIN {
-                font-size: 1.8em;
-            }
+        /* Ajustement des marges entre les blocs pour optimiser l'espace */
+        .separator {
+             height: 10px; /* Petit séparateur pour remplacer les <br> */
         }
-        */
 
     </style>
 </head>
 <body>
-<h1 id="header">DIN CALCULATOR</h1>
-<br>
-<form>
-    <label for="weight">Entrer votre poids (lbs):</label>
-    <input type="number" id="weight">
-    <label for="height">Entrer taille (cm):</label>
-    <input type="number" id="height">
-    <label for="age">Entrer votre âge:</label>
-    <input type="number" id="age">
-    <label for="longeurSemelle">Longueur de la botte (mm):</label>
-    <input type="number" id="longeurSemelle">
-    <label for="skierLevel">Choisissez votre niveau de ski: </label>
-    <select id="skierLevel">
-        <option value="1">Débutant</option>
-        <option value="2">Intermédiaire</option>
-        <option value="3">Avancé</option>
-    </select>
-</form>
 
-<br>
-<button onclick="calculateDIN()">
-    CALCULER
-</button>
+<div id="main-container">
 
-<div id="DIN"></div>
+    <h1 id="header">DIN CALCULATOR</h1>
+    
+    <div class="separator"></div> 
+
+    <form>
+        <label for="weight">Entrer votre poids (lbs):</label>
+        <input type="number" id="weight">
+        <label for="height">Entrer taille (cm):</label>
+        <input type="number" id="height">
+        <label for="age">Entrer votre âge:</label>
+        <input type="number" id="age">
+        <label for="longeurSemelle">Longueur de la botte (mm):</label>
+        <input type="number" id="longeurSemelle">
+        <label for="skierLevel">Choisissez votre niveau de ski: </label>
+        <select id="skierLevel">
+            <option value="1">Débutant</option>
+            <option value="2">Intermédiaire</option>
+            <option value="3">Avancé</option>
+        </select>
+    </form>
+
+    <div class="separator"></div>
+    
+    <button onclick="calculateDIN()">
+        CALCULER
+    </button>
+
+    <div id="DIN"></div>
+</div>
 
 <script>
     function calculateDIN() {
@@ -172,7 +192,7 @@
         let overallIndex;
         let DIN;
 
-        //Index weight
+        //Index weight (Pas de changement ici, tout le JS est conservé)
         switch (true) {
             case (weight >= 22 && weight <= 29): weightIndex = 1; break;
             case (weight >= 30 && weight <= 38): weightIndex = 2; break;
