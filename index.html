@@ -1,356 +1,361 @@
-<!DOCTYPE html>
+modify the script so it automatically adaps to the screen so that there is no scroll bar: <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculateur de DIN - CLI Mode</title>
-    <style>
-        /* 💡 MODIFICATION 1: Ajout de CSS pour la stabilité et la correction des séparateurs */
-        body {
-            background-color: #000000;
-            color: #00FFFF;
-            text-align: center;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            padding: 0;
-            margin: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de DIN - CLI Mode</title>
+    <style>
+        /* Global CLI Theme Styles */
+        body {
+            background-color: #000000; /* Deep black background */
+            color: #00FFFF; /* Bright cyan text for 'terminal' feel */
+            text-align: center;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Monospaced font */
+            /* Diminuer le padding sur les bords pour mobile */
+            padding: 10px;
+        }
 
-        #main-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            height: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            overflow-y: auto; 
-        }
+        /* Heading Style */
+        h1 {
+            color: #00FF7F; /* A bright green for the main title */
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            text-align: center;
+            border-bottom: 2px solid #00FFFF;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            /* Augmenter la taille pour le mobile */
+            font-size: 1.8em; 
+        }
 
-        /* Heading Style */
-        h1 {
-            color: #00FF7F;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            text-align: center;
-            border-bottom: 2px solid #00FFFF;
-            padding-bottom: 10px;
-            margin: 0 0 30px 0;
-            font-size: 1.8em;
-            width: 100%; 
-            max-width: 400px;
-            box-sizing: border-box;
-            padding-left: 10px;
-            padding-right: 10px;
-        }
+        /* Form and Label Styles */
+        form {
+            text-align: center;
+            /* Laisser la max-width, mais elle sera ignorée sur petit écran grâce à la media query */
+            max-width: 400px;
+            margin: 0 auto;
+            /* Assurer une marge suffisante autour du formulaire */
+            padding: 0 10px; 
+        }
 
-        /* Form and Label Styles */
-        form {
-            text-align: center;
-            max-width: 400px;
-            margin: 0;
-            padding: 0 10px;
-            width: 100%; 
-            box-sizing: border-box;
-        }
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 5px;
+            color: #00FFFF;
+            /* Rendre les labels plus grands pour le doigt */
+            font-size: 1.1em; 
+        }
 
-        label {
-            display: block;
-            text-align: left;
-            margin-bottom: 5px;
-            color: #00FFFF;
-            font-size: 1.1em;
-        }
+        /* Input and Select Fields - CLI Look */
+        input[type="number"], select {
+            background-color: #000000;
+            color: #00FFFF;
+            border: 1px solid #00FFFF; /* Subtle cyan border */
+            /* Augmenter le padding pour le doigt */
+            padding: 10px; 
+            margin-bottom: 20px; /* Plus d'espace entre les champs */
+            width: 100%; 
+            box-sizing: border-box; 
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            /* Rendre la police plus grande dans les champs */
+            font-size: 1.1em; 
+        }
+        
+        /* ... (Règles existantes pour input[type="number"]::-webkit-inner-spin-button, etc.) ... */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0; 
+        }
+        input[type="number"] {
+            -moz-appearance: textfield; 
+        }
 
-        /* Input and Select Fields - CLI Look */
-        input[type="number"], select {
-            background-color: #000000;
-            color: #00FFFF;
-            border: 1px solid #00FFFF;
-            padding: 10px;
-            margin-bottom: 20px;
-            width: 100%;
-            box-sizing: border-box;
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            font-size: 1.1em;
-        }
-       
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
+        select option {
+            background-color: #000000;
+            color: #00FFFF;
+        }
 
-        select option {
-            background-color: #000000;
-            color: #00FFFF;
-        }
+        input:focus,
+        select:focus,
+        button:focus {
+            outline: none;
+            /* box-shadow: 0 0 5px #00FF7F; */ /* Optionnel */
+        }
 
-        input:focus,
-        select:focus,
-        button:focus {
-            outline: none;
-        }
+        /* Button Style */
+        button {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            text-align: center;
+            display: block;
+            margin: 20px auto;
+            border-radius: 0; 
+            /* Rendre le bouton plus grand pour le mobile */
+            width: 80%; 
+            max-width: 250px; /* Limiter la taille max sur grand écran */
+            height: 50px; /* Plus de hauteur */
+            background-color: #000000;
+            color: #00FF7F; 
+            border: 2px solid #00FF7F; 
+            cursor: pointer;
+            transition: background-color 0.1s, color 0.1s;
+            font-size: 1.2em; /* Texte plus grand */
+        }
 
-        /* Button Style */
-        #calculate-button { /* Changement pour utiliser l'ID du bouton */
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-            text-align: center;
-            display: block;
-            margin: 20px auto;
-            border-radius: 0;
-            
-            /* Rendre le bouton stable et éviter le raccourcissement */
-            width: 100%; /* Utilise la largeur du conteneur parent */
-            max-width: 250px; 
-            min-width: 150px; /* Assure une largeur minimale */
-            
-            height: 50px;
-            background-color: #000000;
-            color: #00FF7F;
-            border: 2px solid #00FF7F;
-            cursor: pointer;
-            transition: background-color 0.1s, color 0.1s;
-            font-size: 1.2em;
-        }
+        button:hover {
+            background-color: #00FF7F;
+            color: #000000; 
+        }
 
-        #calculate-button:hover {
-            background-color: #00FF7F;
-            color: #000000;
-        }
+        /* Result Display Style */
+        #DIN {
+            margin-top: 30px;
+            /* Rendre le résultat très visible */
+            font-size: 2em; 
+            color: #00FF7F;
+            text-align: center;
+            white-space: pre; 
+        }
 
-        /* Result Display Style */
-        #DIN {
-            margin-top: 30px;
-            font-size: 2em;
-            color: #00FF7F;
-            text-align: center;
-            white-space: pre;
-            margin-bottom: 10px; 
-            padding-bottom: 10px; 
-        }
+        /* 2. MEDIA QUERY POUR LES PETITS ÉCRANS (Optionnel mais souvent utile) */
+        /* Dans ce cas, les styles globaux ajustés suffisent, mais on pourrait ajouter des ajustements ici. */
+        /*
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            #DIN {
+                font-size: 1.8em;
+            }
+        }
+        */
 
-        .separator {
-             height: 10px; 
-        }
-
-    </style>
+    </style>
 </head>
 <body>
+<h1 id="header">DIN CALCULATOR</h1>
+<br>
+<form>
+    <label for="weight">Entrer votre poids (lbs):</label>
+    <input type="number" id="weight">
+    <label for="height">Entrer taille (cm):</label>
+    <input type="number" id="height">
+    <label for="age">Entrer votre âge:</label>
+    <input type="number" id="age">
+    <label for="longeurSemelle">Longueur de la botte (mm):</label>
+    <input type="number" id="longeurSemelle">
+    <label for="skierLevel">Choisissez votre niveau de ski: </label>
+    <select id="skierLevel">
+        <option value="1">Débutant</option>
+        <option value="2">Intermédiaire</option>
+        <option value="3">Avancé</option>
+    </select>
+</form>
 
-<div id="main-container">
+<br>
+<button onclick="calculateDIN()">
+    CALCULER
+</button>
 
-    <h1 id="header">DIN CALCULATOR</h1>
-    
-    <div class="separator"></div> 
-
-    <form id="din-form">
-        <label for="weight">Entrer votre poids (lbs):</label>
-        <input type="number" id="weight">
-        <label for="height">Entrer taille (cm):</label>
-        <input type="number" id="height">
-        <label for="age">Entrer votre âge:</label>
-        <input type="number" id="age">
-        <label for="longeurSemelle">Longueur de la botte (mm):</label>
-        <input type="number" id="longeurSemelle">
-        <label for="skierLevel">Choisissez votre niveau de ski: </label>
-        <select id="skierLevel">
-            <option value="1">Débutant</option>
-            <option value="2">Intermédiaire</option>
-            <option value="3">Avancé</option>
-        </select>
-    </form>
-
-    <div class="separator"></div>
-    
-    <button id="calculate-button">
-        CALCULER
-    </button>
-
-    <div id="DIN"></div>
-</div>
+<div id="DIN"></div>
 
 <script>
-    // La fonction de calcul DIN reste inchangée
-    function calculateDIN() {
-        // Validation basique pour s'assurer que tous les champs sont remplis avant de calculer
-        const weight = parseFloat(document.getElementById('weight').value);
-        const height = parseFloat(document.getElementById('height').value);
-        const age = parseFloat(document.getElementById('age').value);
-        const longeurBotte = parseFloat(document.getElementById('longeurSemelle').value);
-        const skierLevel = parseFloat(document.getElementById('skierLevel').value);
+    function calculateDIN() {
+        let weight = parseFloat(document.getElementById('weight').value);
+        let height = parseFloat(document.getElementById('height').value);
+        let age = parseFloat(document.getElementById('age').value);
+        let longeurBotte = parseFloat(document.getElementById('longeurSemelle').value);
+        let skierLevel = parseFloat(document.getElementById('skierLevel').value);
 
-        if (isNaN(weight) || isNaN(height) || isNaN(age) || isNaN(longeurBotte)) {
-            document.getElementById("DIN").innerHTML = "DIN: Entrez toutes les valeurs valides.";
-            return; 
-        }
-        
-        // --- LOGIQUE DIN (aucune modification) ---
-        let weightIndex;
-        let heightIndex;
-        let overallIndex;
-        let DIN;
+        let weightIndex;
+        let heightIndex;
+        let overallIndex;
+        let DIN;
 
-        //Index weight
-        switch (true) {
-            case (weight >= 22 && weight <= 29): weightIndex = 1; break;
-            case (weight >= 30 && weight <= 38): weightIndex = 2; break;
-            case (weight >= 39 && weight <= 47): weightIndex = 3; break;
-            case (weight >= 48 && weight <= 56): weightIndex = 4; break;
-            case (weight >= 57 && weight <= 66): weightIndex = 5; break;
-            case (weight >= 67 && weight <= 78): weightIndex = 6; break;
-            case (weight >= 79 && weight <= 91): weightIndex = 7; break;
-            case (weight >= 92 && weight <= 107): weightIndex = 8; break;
-            case (weight >= 108 && weight <= 125): weightIndex = 9; break;
-            case (weight >= 126 && weight <= 147): weightIndex = 10; break;
-            case (weight >= 148 && weight <= 174): weightIndex = 11; break;
-            case (weight >= 175 && weight <= 209): weightIndex = 12; break;
-            case (weight >= 210): weightIndex = 13; break;
-            default: weightIndex = NaN;
-        }
+        //Index weight
+        switch (true) {
+            case (weight >= 22 && weight <= 29): weightIndex = 1; break;
+            case (weight >= 30 && weight <= 38): weightIndex = 2; break;
+            case (weight >= 39 && weight <= 47): weightIndex = 3; break;
+            case (weight >= 48 && weight <= 56): weightIndex = 4; break;
+            case (weight >= 57 && weight <= 66): weightIndex = 5; break;
+            case (weight >= 67 && weight <= 78): weightIndex = 6; break;
+            case (weight >= 79 && weight <= 91): weightIndex = 7; break;
+            case (weight >= 92 && weight <= 107): weightIndex = 8; break;
+            case (weight >= 108 && weight <= 125): weightIndex = 9; break;
+            case (weight >= 126 && weight <= 147): weightIndex = 10; break;
+            case (weight >= 148 && weight <= 174): weightIndex = 11; break;
+            case (weight >= 175 && weight <= 209): weightIndex = 12; break;
+            case (weight >= 210): weightIndex = 13; break;
+            default: weightIndex = NaN;
+        }
 
-        //Index height
-        switch (true) {
-            case (height <= 148): heightIndex = 8; break;
-            case (height >= 149 && height <= 157): heightIndex = 9; break;
-            case (height >= 158 && height <= 166): heightIndex = 10; break;
-            case (height >= 167 && height <= 178): heightIndex = 11; break;
-            case (height >= 179 && height <= 194): heightIndex = 12; break;
-            case (height >= 195): heightIndex = 13; break;
-            default: heightIndex = NaN;
-        }
+        //Index height
+        switch (true) {
+            case (height <= 148): heightIndex = 8; break;
+            case (height >= 149 && height <= 157): heightIndex = 9; break;
+            case (height >= 158 && height <= 166): heightIndex = 10; break;
+            case (height >= 167 && height <= 178): heightIndex = 11; break;
+            case (height >= 179 && height <= 194): heightIndex = 12; break;
+            case (height >= 195): heightIndex = 13; break;
+            default: heightIndex = NaN;
+        }
 
-        //Sélectione l'index le plus bas
-        if (weightIndex > heightIndex) {
-            overallIndex = heightIndex;
-        }
-        else if (weightIndex < heightIndex) {
-            overallIndex = weightIndex;
-        }
-        else {
-            overallIndex = weightIndex;
-        }
+        //Sélectione l'index le plus bas
+        if (weightIndex > heightIndex) {
+            overallIndex = heightIndex;
+        }
+        else if (weightIndex < heightIndex) {
+            overallIndex = weightIndex;
+        }
+        else {
+            overallIndex = weightIndex;
+        }
 
-        //Applique le type de skieur
-        if(skierLevel === 2){
-            overallIndex ++;
-        }
-        if(skierLevel === 3){
-            overallIndex += 2;
-        }
+        //Applique le type de skieur
+        if(skierLevel === 2){
+            overallIndex ++;
+        }
+        if(skierLevel === 3){
+            overallIndex += 2;
+        }
 
-        //Applique l'age
-        if(age <= 9 || 50 <= age){
-            overallIndex --;
-        }
+        //Applique l'age
+        if(age <= 9 || 50 <= age){
+            overallIndex --;
+        }
 
-        //Applique la longeur de la botte
-        switch (true) {
-            // ... (les cases restent les mêmes) ...
-            case (longeurBotte <= 230):
-                switch (overallIndex) {
-                    case 1: DIN = 0.75; break; case 2: DIN = 1; break;
-                    case 3: DIN = 1.5; break; case 4: DIN = 2; break;
-                    case 5: DIN = 2.5; break; case 6: DIN = 3; break;
-                }
-                break;
-            case (longeurBotte >= 231 && longeurBotte <= 250):
-                switch (overallIndex) {
-                    case 1: DIN = 0.75; break; case 2: DIN = 0.75; break;
-                    case 3: DIN = 1.25; break; case 4: DIN = 1.75; break;
-                    case 5: DIN = 2.25; break; case 6: DIN = 2.75; break;
-                    case 7: DIN = 3.5; break;
-                }
-                break;
-            case (longeurBotte >= 251 && longeurBotte <= 270):
-                switch (overallIndex) {
-                    case 1: DIN = 0.75; break; case 2: DIN = 0.75; break;
-                    case 3: DIN = 1.25; break; case 4: DIN = 1.5; break;
-                    case 5: DIN = 2; break; case 6: DIN = 2.5; break;
-                    case 7: DIN = 3; break; case 8: DIN = 3.5; break;
-                    case 9: DIN = 4.5; break; case 10: DIN = 5.5; break;
-                    case 11: DIN = 6.5; break; case 12: DIN = 7.5; break;
-                }
-                break;
-            case (longeurBotte >= 271 && longeurBotte <= 290):
-                switch (overallIndex) {
-                    case 2: DIN = 0.75; break; case 3: DIN = 1; break;
-                    case 4: DIN = 1.5; break; case 5: DIN = 1.75; break;
-                    case 6: DIN = 2.25; break; case 7: DIN = 2.75; break;
-                    case 8: DIN = 3; break; case 9: DIN = 4; break;
-                    case 10: DIN = 5; break; case 11: DIN = 6; break;
-                    case 12: DIN = 7; break; case 13: DIN = 8.5; break;
-                    case 14: DIN = 10; break; case 15: DIN = 11.5; break;
-                }
-                break;
-            case (longeurBotte >= 291 && longeurBotte <= 310):
-                switch (overallIndex) {
-                    case 4: DIN = 1.25; break; case 5: DIN = 1.5; break;
-                    case 6: DIN = 2; break; case 7: DIN = 2.5; break;
-                    case 8: DIN = 3; break; case 9: DIN = 3.5; break;
-                    case 10: DIN = 4.5; break; case 11: DIN = 5.5; break;
-                    case 12: DIN = 6.5; break; case 13: DIN = 8; break;
-                    case 14: DIN = 9.5; break; case 15: DIN = 11; break;
-                }
-                break;
-            case (longeurBotte >= 311 && longeurBotte <= 330):
-                switch (overallIndex) {
-                    case 5: DIN = 1.5; break; case 6: DIN = 1.75; break;
-                    case 7: DIN = 2.25; break; case 8: DIN = 2.75; break;
-                    case 9: DIN = 3.5; break; case 10: DIN = 4; break;
-                    case 11: DIN = 5; break; case 12: DIN = 6; break;
-                    case 13: DIN = 7; break; case 14: DIN = 8.5; break;
-                    case 15: DIN = 10; break; case 16: DIN = 12; break;
-                }
-                break;
-            case (longeurBotte >= 331 && longeurBotte < 350):
-                switch (overallIndex) {
-                    case 6: DIN = 1.75; break; case 7: DIN = 2; break;
-                    case 8: DIN = 2.5; break; case 9: DIN = 3; break;
-                    case 10: DIN = 3.5; break; case 11: DIN = 4.5; break;
-                    case 12: DIN = 5.5; break; case 13: DIN = 6.5; break;
-                    case 14: DIN = 8; break; case 15: DIN = 9.5; break;
-                    case 16: DIN = 11; break;
-                }
-                break;
-            case (longeurBotte >= 350):
-                switch (overallIndex) {
-                    case 10: DIN = 3; break; case 11: DIN = 4; break;
-                    case 12: DIN = 5; break; case 13: DIN = 6; break;
-                    case 14: DIN = 7.5; break; case 15: DIN = 9; break;
-                    case 16: DIN = 10.5; break;
-                }
-                break;
-            default:
-                DIN = NaN;
-        }
-        // --- FIN LOGIQUE DIN ---
+        //Applique la longeur de la botte
+        switch (true) {
 
-        // Afficher le résultat
-        if (!isNaN(DIN)) {
-             document.getElementById("DIN").innerHTML = "DIN: " + DIN.toFixed(2);
-        } else {
-             document.getElementById("DIN").innerHTML = "DIN: Impossible de calculer (Valeurs hors plage?)";
-        }
-       
-    }
+            case (longeurBotte <= 230):
+                switch (overallIndex) {
+                    case 1: DIN = 0.75; break;
+                    case 2: DIN = 1; break;
+                    case 3: DIN = 1.5; break;
+                    case 4: DIN = 2; break;
+                    case 5: DIN = 2.5; break;
+                    case 6: DIN = 3; break;
+                }
+                break;
 
-    // 💡 MODIFICATION 3: Utilisation d'un Event Listener pour une meilleure compatibilité mobile
-    document.addEventListener('DOMContentLoaded', () => {
-        const calculateButton = document.getElementById('calculate-button');
-        const dinForm = document.getElementById('din-form');
+            case (longeurBotte >= 231 && longeurBotte <= 250):
+                switch (overallIndex) {
+                    case 1: DIN = 0.75; break;
+                    case 2: DIN = 0.75; break;
+                    case 3: DIN = 1.25; break;
+                    case 4: DIN = 1.75; break;
+                    case 5: DIN = 2.25; break;
+                    case 6: DIN = 2.75; break;
+                    case 7: DIN = 3.5; break;
+                }
+                break;
 
-        // Empêcher l'envoi du formulaire pour éviter le rechargement de la page
-        dinForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-        });
+            case (longeurBotte >= 251 && longeurBotte <= 270):
+                switch (overallIndex) {
+                    case 1: DIN = 0.75; break;
+                    case 2: DIN = 0.75; break;
+                    case 3: DIN = 1.25; break;
+                    case 4: DIN = 1.5; break;
+                    case 5: DIN = 2; break;
+                    case 6: DIN = 2.5; break;
+                    case 7: DIN = 3; break;
+                    case 8: DIN = 3.5; break;
+                    case 9: DIN = 4.5; break;
+                    case 10: DIN = 5.5; break;
+                    case 11: DIN = 6.5; break;
+                    case 12: DIN = 7.5; break;
+                }
+                break;
 
-        // Attacher la fonction de calcul à l'événement de clic du bouton
-        calculateButton.addEventListener('click', calculateDIN);
-    });
+            case (longeurBotte >= 271 && longeurBotte <= 290):
+                switch (overallIndex) {
+                    case 2: DIN = 0.75; break;
+                    case 3: DIN = 1; break;
+                    case 4: DIN = 1.5; break;
+                    case 5: DIN = 1.75; break;
+                    case 6: DIN = 2.25; break;
+                    case 7: DIN = 2.75; break;
+                    case 8: DIN = 3; break;
+                    case 9: DIN = 4; break;
+                    case 10: DIN = 5; break;
+                    case 11: DIN = 6; break;
+                    case 12: DIN = 7; break;
+                    case 13: DIN = 8.5; break;
+                    case 14: DIN = 10; break;
+                    case 15: DIN = 11.5; break;
+                }
+                break;
+
+            case (longeurBotte >= 291 && longeurBotte <= 310):
+                switch (overallIndex) {
+                    case 4: DIN = 1.25; break;
+                    case 5: DIN = 1.5; break;
+                    case 6: DIN = 2; break;
+                    case 7: DIN = 2.5; break;
+                    case 8: DIN = 3; break;
+                    case 9: DIN = 3.5; break;
+                    case 10: DIN = 4.5; break;
+                    case 11: DIN = 5.5; break;
+                    case 12: DIN = 6.5; break;
+                    case 13: DIN = 8; break;
+                    case 14: DIN = 9.5; break;
+                    case 15: DIN = 11; break;
+                }
+                break;
+
+            case (longeurBotte >= 311 && longeurBotte <= 330):
+                switch (overallIndex) {
+                    case 5: DIN = 1.5; break;
+                    case 6: DIN = 1.75; break;
+                    case 7: DIN = 2.25; break;
+                    case 8: DIN = 2.75; break;
+                    case 9: DIN = 3.5; break;
+                    case 10: DIN = 4; break;
+                    case 11: DIN = 5; break;
+                    case 12: DIN = 6; break;
+                    case 13: DIN = 7; break;
+                    case 14: DIN = 8.5; break;
+                    case 15: DIN = 10; break;
+                    case 16: DIN = 12; break;
+                }
+                break;
+
+            case (longeurBotte >= 331 && longeurBotte < 350):
+                switch (overallIndex) {
+                    case 6: DIN = 1.75; break;
+                    case 7: DIN = 2; break;
+                    case 8: DIN = 2.5; break;
+                    case 9: DIN = 3; break;
+                    case 10: DIN = 3.5; break;
+                    case 11: DIN = 4.5; break;
+                    case 12: DIN = 5.5; break;
+                    case 13: DIN = 6.5; break;
+                    case 14: DIN = 8; break;
+                    case 15: DIN = 9.5; break;
+                    case 16: DIN = 11; break;
+                }
+                break;
+
+            case (longeurBotte >= 350):
+                switch (overallIndex) {
+                    case 10: DIN = 3; break;
+                    case 11: DIN = 4; break;
+                    case 12: DIN = 5; break;
+                    case 13: DIN = 6; break;
+                    case 14: DIN = 7.5; break;
+                    case 15: DIN = 9; break;
+                    case 16: DIN = 10.5; break;
+                }
+                break;
+
+            default:
+                DIN = NaN;
+        }
+
+
+        document.getElementById("DIN").innerHTML = "DIN: " + DIN;
+    }
 </script>
 
 </body>
