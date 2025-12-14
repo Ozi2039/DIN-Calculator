@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculateur de DIN - CLI Mode</title>
     <style>
         /* Global CLI Theme Styles */
@@ -10,7 +11,8 @@
             color: #00FFFF; /* Bright cyan text for 'terminal' feel */
             text-align: center;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace; /* Monospaced font */
-            padding: 20px;
+            /* Diminuer le padding sur les bords pour mobile */
+            padding: 10px;
         }
 
         /* Heading Style */
@@ -21,13 +23,18 @@
             border-bottom: 2px solid #00FFFF;
             padding-bottom: 10px;
             margin-bottom: 30px;
+            /* Augmenter la taille pour le mobile */
+            font-size: 1.8em; 
         }
 
         /* Form and Label Styles */
         form {
             text-align: center;
+            /* Laisser la max-width, mais elle sera ignorée sur petit écran grâce à la media query */
             max-width: 400px;
             margin: 0 auto;
+            /* Assurer une marge suffisante autour du formulaire */
+            padding: 0 10px; 
         }
 
         label {
@@ -35,6 +42,8 @@
             text-align: left;
             margin-bottom: 5px;
             color: #00FFFF;
+            /* Rendre les labels plus grands pour le doigt */
+            font-size: 1.1em; 
         }
 
         /* Input and Select Fields - CLI Look */
@@ -42,33 +51,26 @@
             background-color: #000000;
             color: #00FFFF;
             border: 1px solid #00FFFF; /* Subtle cyan border */
-            padding: 5px;
-            margin-bottom: 15px;
-            width: 100%; /* Make them full width of the form */
-            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            /* Augmenter le padding pour le doigt */
+            padding: 10px; 
+            margin-bottom: 20px; /* Plus d'espace entre les champs */
+            width: 100%; 
+            box-sizing: border-box; 
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            /* Rendre la police plus grande dans les champs */
+            font-size: 1.1em; 
         }
-
-        /* --- Input Number Spinners (Arrows) Theming --- */
-        /* Hiding the default arrows for a cleaner CLI look */
+        
+        /* ... (Règles existantes pour input[type="number"]::-webkit-inner-spin-button, etc.) ... */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
-            margin: 0; /* Remove margin that is usually there */
+            margin: 0; 
         }
         input[type="number"] {
-            -moz-appearance: textfield; /* Firefox hides the arrows with this */
+            -moz-appearance: textfield; 
         }
-        /* Alternative: If you want to keep and style them (less common for CLI)
-        input[type="number"]::-webkit-inner-spin-button {
-            opacity: 1;
-            background: #000000;
-            color: #00FFFF;
-            height: 100%;
-        }
-        */
 
-        /* Select Options Styling (Limited customization in browsers) */
         select option {
             background-color: #000000;
             color: #00FFFF;
@@ -78,39 +80,55 @@
         select:focus,
         button:focus {
             outline: none;
-            /* Optional: Add a custom CLI-themed focus style instead of removing it entirely */
-            /* For example: box-shadow: 0 0 5px #00FF7F; */
+            /* box-shadow: 0 0 5px #00FF7F; */ /* Optionnel */
         }
 
-        /* Button Style - Themed as an actionable prompt */
+        /* Button Style */
         button {
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             text-align: center;
             display: block;
             margin: 20px auto;
-            border-radius: 0; /* Sharp corners */
-            width: 120px;
-            height: 35px;
+            border-radius: 0; 
+            /* Rendre le bouton plus grand pour le mobile */
+            width: 80%; 
+            max-width: 250px; /* Limiter la taille max sur grand écran */
+            height: 50px; /* Plus de hauteur */
             background-color: #000000;
-            color: #00FF7F; /* Bright green text */
-            border: 2px solid #00FF7F; /* Bright green border */
+            color: #00FF7F; 
+            border: 2px solid #00FF7F; 
             cursor: pointer;
             transition: background-color 0.1s, color 0.1s;
+            font-size: 1.2em; /* Texte plus grand */
         }
 
         button:hover {
             background-color: #00FF7F;
-            color: #000000; /* Invert colors on hover */
+            color: #000000; 
         }
 
         /* Result Display Style */
         #DIN {
-            margin-top: 20px;
-            font-size: 1.5em;
+            margin-top: 30px;
+            /* Rendre le résultat très visible */
+            font-size: 2em; 
             color: #00FF7F;
             text-align: center;
-            white-space: pre; /* To handle potential prompt-like formatting */
+            white-space: pre; 
         }
+
+        /* 2. MEDIA QUERY POUR LES PETITS ÉCRANS (Optionnel mais souvent utile) */
+        /* Dans ce cas, les styles globaux ajustés suffisent, mais on pourrait ajouter des ajustements ici. */
+        /*
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            #DIN {
+                font-size: 1.8em;
+            }
+        }
+        */
 
     </style>
 </head>
